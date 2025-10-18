@@ -5,22 +5,31 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class MyFunctions {
-	
-	public static String readUrl(String urlString) throws Exception {
-	    BufferedReader reader = null;
-	    try {
-	        URL url = new URL(urlString);
-	        reader = new BufferedReader(new InputStreamReader(url.openStream()));
-	        StringBuffer buffer = new StringBuffer();
-	        int read;
-	        char[] chars = new char[1024];
-	        while ((read = reader.read(chars)) != -1)
-	            buffer.append(chars, 0, read); 
-	        return buffer.toString();
-	    } finally {
-	        if (reader != null)
-	            reader.close();
-	    }
-	}
 
+  public static String readUrl(String urlString) {
+    StringBuilder content = new StringBuilder();
+    try (
+      BufferedReader reader = new BufferedReader(
+        new InputStreamReader(new URL(urlString).openStream())
+      )
+    ) {
+      char[] buffer = new char[1024];
+      int read;
+      while ((read = reader.read(buffer)) != -1) {
+        content.append(buffer, 0, read);
+      }
+      System.out.println(
+        "[MyFunctions] ==> Successfully read URL: " + urlString
+      );
+    } catch (Exception e) {
+      System.err.println(
+        "[MyFunctions] ==> Failed to read URL: " +
+        urlString +
+        " - " +
+        e.getMessage()
+      );
+      e.printStackTrace();
+    }
+    return content.toString();
+  }
 }

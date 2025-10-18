@@ -3,86 +3,67 @@ package com.dgreat.rfid;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
 public class Props {
-	Properties prop = new Properties();
-	InputStream input = null;
-	OutputStream output = null;
-	
-	public Props() {
-		String now = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
 
-		this.setProp("LastRun", now);
-	}
-	public String getProp(String key) {
-		String ret = "Not Found";
-		
-		try {
-			input = new FileInputStream("config.properties");
-			// load a properties file
-			if(input==null){
-	            System.out.println("Sorry, unable to find properties");
-			    return ret;
-			}
-			prop.load(input);
-			ret = prop.getProperty(key);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		return ret;
-	}
-	
-	public boolean setProp(String key,String value) {
-		boolean ret = false;
-		try {
-			input = new FileInputStream("config.properties");
-			prop.load(input); 
-			input.close();
-			
-			output = new FileOutputStream("config.properties");			
-			prop.setProperty(key, value);
-			
-			// save properties to project root folder
-			prop.store(output, null);
+  private final Properties prop = new Properties();
+  private final String configFile = "config.properties";
 
-		} catch (IOException io) {
-			io.printStackTrace();
-		} finally {
-			if (output != null) {
-				try {
-					input.close();
-					output.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+  public Props() {
+    String now = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
+    setProp("LastRun", now);
+    System.out.println("[Props] ==> Initialized LastRun to " + now);
+  }
 
-		}
+  public String getProp(String key) {
+    try (FileInputStream input = new FileInputStream(configFile)) {
+      prop.load(input);
+      String value = prop.getProperty(key);
+      if (value != null) {
+        System.out.println("[Props] ==> Retrieved " + key + " = " + value);
+        return value;
+      } else {
+        System.out.println("[Props] ==> Property not found: " + key);
+      }
+    } catch (IOException e) {
+      System.err.println(
+        "[Props] ==> Failed to read properties: " + e.getMessage()
+      );
+    }
+    return "Not Found";
+  }
 
-		return ret;
-	}
-	
-	
-	
-	public static void main(String[] args) {
-		Props p = new Props();
-		System.out.println(p.getProp("LastRun"));
-		p.setProp("license", "2048");
-		//p.test();
-	}
+  public boolean setProp(String key, String value) {
+    boolean success = false;
+    try (FileInputStream input = new FileInputStream(configFile)) {
+      prop.load(input);
+    } catch (IOException e) {
+      System.out.println(
+        "[Props] ==> Properties file not found, creating new."
+      );
+    }
 
+    prop.setProperty(key, value);
+
+    try (FileOutputStream output = new FileOutputStream(configFile)) {
+      prop.store(output, null);
+      success = true;
+      System.out.println("[Props] ==> Set " + key + " = " + value);
+    } catch (IOException e) {
+      System.err.println(
+        "[Props] ==> Failed to save property " + key + ": " + e.getMessage()
+      );
+    }
+
+    return success;
+  }
+
+  public static void main(String[] args) {
+    Props p = new Props();
+    System.out.println("[Props] ==> LastRun = " + p.getProp("LastRun"));
+    p.setProp("license", "2048");
+  }
 }

@@ -2,26 +2,32 @@ package com.dgreat.rfid;
 
 import java.io.IOException;
 import java.io.OutputStream;
- 
 import javax.swing.JTextArea;
- 
+
 /**
- * This class extends from OutputStream to redirect output to a JTextArrea
- * @author www.codejava.net
- *
+ * Redirects output stream to a JTextArea.
  */
 public class CustomOutputStream extends OutputStream {
-    private JTextArea textArea;
-     
-    public CustomOutputStream(JTextArea textArea) {
-        this.textArea = textArea;
-    }
-     
-    @Override
-    public void write(int b) throws IOException {
-        // redirects data to the text area
-        textArea.append(String.valueOf((char)b));
-        // scrolls the text area to the end of data
-        textArea.setCaretPosition(textArea.getDocument().getLength());
-    }
+
+  private final JTextArea textArea;
+
+  public CustomOutputStream(JTextArea textArea) {
+    this.textArea = textArea;
+  }
+
+  @Override
+  public void write(int b) throws IOException {
+    // Redirect single character to text area
+    textArea.append(String.valueOf((char) b));
+    // Scroll to the end
+    textArea.setCaretPosition(textArea.getDocument().getLength());
+  }
+
+  @Override
+  public void write(byte[] b, int off, int len) throws IOException {
+    // Optional override for efficiency when writing byte arrays
+    String text = new String(b, off, len);
+    textArea.append(text);
+    textArea.setCaretPosition(textArea.getDocument().getLength());
+  }
 }
