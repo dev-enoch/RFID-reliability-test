@@ -1,0 +1,2 @@
+Main-Class: com.dgreat.rfid.MainFrame
+Class-Path: . mysql-connector-java-8.0.17.jar

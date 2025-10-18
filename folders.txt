@@ -1,0 +1,14 @@
+src/com/dgreat/resources/icon.png \ mysql-connector-java-8.0.17.jar \sensor.png
+src/com/dgreat/rfid/CustomOutputStream.java \ DbCon.java \ LicenseFrame.java \ MainFrame.java \ MyFunctions.java \ Props.java \ RFID.java \ Tag.java \ Test.java
+src/com/rfid/uhf/Device.java
+src/com/.classpath \ .project /config.properties \ com_rfid_uhf_Device.dll \ UHFReader288MP.dll
+
+javac -encoding UTF-8 -d out -cp ".;src;mysql-connector-java-8.0.17.jar" src/com/dgreat/rfid/*.java src/com/rfid/uhf/*.java
+
+xcopy src\com\dgreat\resources out\com\dgreat\resources /E /I      
+copy config.properties out\ 
+
+jar cfm RFIDApp.jar manifest.txt -C out .
+
+java "-Djava.library.path=."
+ -cp "RFIDApp.jar;mysql-connector-java-8.0.17.jar" com.dgreat.rfid.MainFrame
