@@ -278,5 +278,6 @@ public class Device {
   public static void main(String[] args) {
     // TODO Auto-generated method stub
     // Re-written by Enoch P. 2024 June
+    // This is just a placeholder for testing native methods.
   }
 }
